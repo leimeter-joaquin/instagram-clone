@@ -1,0 +1,17 @@
+{
+  "user": { "name": "Joaquin", "avatar": "https://url" },
+  "image": "https://url",
+  "location": {
+    "coords": [123, 123, 123, 123],
+    "name": "Los Angeles"
+  },
+  "likes": "300",
+  "comments": [
+    {
+      "user": { "name": "Joaquin", "avatar": "https://url" },
+      "timestamp": 123123123,
+      "content": "nice weather it seems"
+    }
+  ],
+  "timestamp": 123123
+}
