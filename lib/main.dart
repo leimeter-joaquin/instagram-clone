@@ -18,6 +18,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        iconTheme: const IconThemeData(color: Colors.white),
+        textTheme: const TextTheme(
+          bodyText2: TextStyle(
+              color: Colors
+                  .white), // This is making the text white, research how this actually works
+          caption: TextStyle(color: Colors.white),
+        ),
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(),
@@ -47,6 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
       length: 5,
       child: SafeArea(
         child: Scaffold(
+          // TODO: create dark/light mode.
+          backgroundColor: Colors.black,
           appBar: AppBar(title: const Text('Instagram')),
           body: TabBarView(children: pages),
           bottomNavigationBar: const TabBar(

@@ -1,17 +1,18 @@
 {
-  "user": { "name": "Joaquin", "avatar": "https://url" },
-  "image": "https://url",
-  "location": {
-    "coords": [123, 123, 123, 123],
-    "name": "Los Angeles"
-  },
-  "likes": "300",
+  "user": { "name": "Culo", "avatar": "https://picsum.photos/400/400" },
+  "image": "https://picsum.photos/400/400",
+  "location": "Los Angeles",
+  "likes": 320,
+  "description": "Beautiful Photo, like it or die!",
   "comments": [
     {
-      "user": { "name": "Joaquin", "avatar": "https://url" },
-      "timestamp": 123123123,
+      "user": {
+        "name": "Joaquin",
+        "avatar": "https://picsum.photos/400/400"
+      },
+      "timestamp": "1969-07-20 20:18:04Z",
       "content": "nice weather it seems"
     }
   ],
-  "timestamp": 123123
+  "timestamp": "1969-07-20 20:18:04Z"
 }

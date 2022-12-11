@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:instagram_clone/models/post_model.dart';
 
 class Post extends StatefulWidget {
-  const Post({super.key, required this.username});
+  const Post({super.key, required this.post});
 
-  final String username;
+  final PostModel post;
 
   @override
   State<Post> createState() => _PostState();
@@ -23,12 +24,11 @@ class _PostState extends State<Post> {
             children: [
               Row(
                 children: [
-                  const CircleAvatar(
-                    backgroundImage:
-                        NetworkImage('https://picsum.photos/id/400/400'),
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(widget.post.user.avatar),
                   ),
                   const Gap(10),
-                  Column(children: getUserHeaderInfo(widget.username)),
+                  Column(children: getUserHeaderInfo(widget.post)),
                 ],
               ),
               const Icon(Icons.more_horiz)
@@ -42,9 +42,9 @@ class _PostState extends State<Post> {
           constraints: BoxConstraints(
               minWidth: MediaQuery.of(context).size.width,
               minHeight: MediaQuery.of(context).size.width),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage('https://picsum.photos/id/600/600'),
+              image: NetworkImage(widget.post.image),
             ),
           ),
         ),
@@ -71,14 +71,22 @@ class _PostState extends State<Post> {
         ),
 
         // Like counter
-        // TODO:make this dinamic
-        const Text(
-          '300 likes',
+        Text(
+          widget.post.likes.toString(),
           textAlign: TextAlign.start,
         ),
 
+        // Description
+        Container(
+          decoration: const BoxDecoration(color: Colors.amber),
+          child: Text(widget.post.description),
+        ),
+
         // Comments teaser
-        Container()
+        Container(
+          decoration: const BoxDecoration(color: Colors.amber),
+          child: const Text('Click to see the comments'),
+        ),
 
         // Time Stamp
       ],
@@ -86,13 +94,12 @@ class _PostState extends State<Post> {
   }
 }
 
-// TODO: Here we should check whether we should display the place description or not
-List<Widget> getUserHeaderInfo(username) {
+List<Widget> getUserHeaderInfo(PostModel post) {
   return [
-    Text(username),
-    const Text(
-      'Place description',
-      style: TextStyle(fontSize: 10),
+    Text(post.user.name),
+    Text(
+      post.location,
+      style: const TextStyle(fontSize: 10),
     )
   ];
 }
