@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
           body: TabBarView(children: pages),
           bottomNavigationBar: const TabBar(
             labelColor: Colors.blue,
-            unselectedLabelColor: Colors.black,
+            unselectedLabelColor: Colors.white,
             indicatorColor: Colors.transparent,
             tabs: [
               Tab(icon: Icon(Icons.home)),

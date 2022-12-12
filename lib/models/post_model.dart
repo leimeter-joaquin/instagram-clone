@@ -6,7 +6,8 @@ part 'post_model.g.dart';
 class PostModel {
   /// The generated code assumes these values exist in JSON.
   final UserData user;
-  final String image, location, description;
+  final String image, location;
+  final String? description;
   final int likes;
   final DateTime timestamp;
   final List<Comment> comments;
@@ -15,7 +16,7 @@ class PostModel {
     required this.user,
     required this.image,
     required this.location,
-    required this.description,
+    this.description,
     required this.likes,
     required this.timestamp,
     required this.comments,

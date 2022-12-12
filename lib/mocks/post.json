@@ -12,6 +12,14 @@
       },
       "timestamp": "1969-07-20 20:18:04Z",
       "content": "nice weather it seems"
+    },
+    {
+      "user": {
+        "name": "Joaquin",
+        "avatar": "https://picsum.photos/400/400"
+      },
+      "timestamp": "1969-07-20 20:18:04Z",
+      "content": "nice weather it seems"
     }
   ],
   "timestamp": "1969-07-20 20:18:04Z"

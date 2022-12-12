@@ -10,7 +10,7 @@ PostModel _$PostModelFromJson(Map<String, dynamic> json) => PostModel(
       user: UserData.fromJson(json['user'] as Map<String, dynamic>),
       image: json['image'] as String,
       location: json['location'] as String,
-      description: json['description'] as String,
+      description: json['description'] as String?,
       likes: json['likes'] as int,
       timestamp: DateTime.parse(json['timestamp'] as String),
       comments: (json['comments'] as List<dynamic>)
