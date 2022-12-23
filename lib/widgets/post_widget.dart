@@ -1,168 +1,211 @@
+import 'dart:ffi';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:instagram_clone/models/post_model.dart';
 
-// This widget usese different methods to get the different parts we need to construct the widget.
-// In some cases we use a function to return  List of Wigets, in others we return a String and use it in a Widget. There are many ways of doing what we need.
-class Post extends StatefulWidget {
-  const Post({super.key, required this.post});
-
+class Post extends StatelessWidget {
   final PostModel post;
 
-  @override
-  State<Post> createState() => _PostState();
-}
+  const Post({super.key, required this.post});
 
-const verticalGap = 5.0;
-const horizontalGap = 10.0;
-
-class _PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(widget.post.user.avatar),
-                  ),
-                  const Gap(horizontalGap),
-                  Column(children: getUserHeaderInfo(widget.post)),
-                ],
-              ),
-              const Icon(Icons.more_horiz)
-            ],
-          ),
+        Header(
+          user: post.user,
+          location: post.location,
         ),
-
-        // Image.
-        // We are using a container here because we might need to add something on top of the image in the future. We could probably have the image as a background instead of a child.
-        Container(
-          constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width,
-              minHeight: MediaQuery.of(context).size.width),
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(widget.post.image),
-            ),
-          ),
-        ),
-
-        // Icons Row
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                          padding: const EdgeInsets.all(0),
-                          constraints: const BoxConstraints(),
-                          onPressed: () => {},
-                          icon: const Icon(Icons.favorite_border)),
-                      const Gap(horizontalGap),
-                      IconButton(
-                          padding: const EdgeInsets.all(0),
-                          constraints: const BoxConstraints(),
-                          onPressed: () => {},
-                          icon: const Icon(Icons.access_alarm_rounded)),
-                      const Gap(horizontalGap),
-                      IconButton(
-                          padding: const EdgeInsets.all(0),
-                          constraints: const BoxConstraints(),
-                          onPressed: () => {},
-                          icon: const Icon(Icons.abc)),
-                    ],
-                  ),
-                  // Image navigator
-                  const Icon(Icons.save)
-                ],
-              ),
-
-              const Gap(verticalGap),
-
-              // Like counter
-              Text(
-                widget.post.likes.toString(),
-                textAlign: TextAlign.start,
-              ),
-
-              const Gap(verticalGap),
-
-              // Description
-              getDescription(widget.post),
-
-              const Gap(verticalGap),
-
-              // Comments teaser
-              Text(
-                getCommentTeaserText(widget.post),
-                style: const TextStyle(color: Colors.white60),
-              ),
-
-              const Gap(verticalGap),
-
-              // Time Stamp
-              Text(widget.post.timestamp.year.toString())
-            ],
-          ),
-        ),
+        ImageCarousel(images: post.images),
+        const Description(),
+        const Comments(),
       ],
     );
   }
 }
 
-// 1. Here we return just the children List
-List<Widget> getUserHeaderInfo(PostModel post) {
-  return [
-    Text(post.user.name),
-    Text(
-      post.location,
-      style: const TextStyle(fontSize: 10),
-    )
-  ];
+class Header extends StatelessWidget {
+  const Header({super.key, required this.user, this.location});
+  final UserData user;
+  final String? location;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          UserInformation(
+            user: user,
+            location: location,
+          ),
+          IconButton(
+            onPressed: () => {},
+            icon: const Icon(Icons.more_vert),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-// 2. Here we return the whole Row Widget.
-Widget getDescription(PostModel post) {
-  /// This assignment to a local String is done because you can not promote a field of an object.
-  /// Promote being that dart knows this field is definitely not null.
-  /// check: https://dart.dev/tools/non-promotion-reasons#property-or-this
-  String? description = post.description;
+class UserInformation extends StatelessWidget {
+  const UserInformation({super.key, required this.user, this.location});
 
-  //We always return a Widget because the "children" property of the parent Column expects a Widget, I don't know why we cannot just return Row | null.
-  if (description != null) {
+  final UserData user;
+  final String? location;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(
-          post.user.name,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        CircleAvatar(
+          backgroundImage: NetworkImage(user.avatar),
         ),
-        const Gap(5),
-        Text(post.description!),
+        const Gap(8),
+        Column(
+          children: [
+            Text(
+              user.name,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            Text(
+              location!,
+              style:
+                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+            ),
+          ],
+        )
       ],
     );
-  } else {
+  }
+}
+
+class ImageCarousel extends StatefulWidget {
+  const ImageCarousel({super.key, required this.images});
+
+  final List<String> images;
+
+  @override
+  State<ImageCarousel> createState() => _ImageCarouselState();
+}
+
+class _ImageCarouselState extends State<ImageCarousel> {
+  int activeIndex = 0;
+  final CarouselController _controller = CarouselController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _getCarousel(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.favorite_outline),
+                  onPressed: () {
+                    //
+                  },
+                  iconSize: 30,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.favorite_outline),
+                  onPressed: () {
+                    //
+                  },
+                  iconSize: 30,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.favorite_outline),
+                  onPressed: () {
+                    //
+                  },
+                  iconSize: 30,
+                )
+              ],
+            ),
+            const Icon(Icons.abc)
+          ],
+        ),
+      ],
+    );
+  }
+
+  Stack _getCarousel() {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        CarouselSlider.builder(
+          carouselController: _controller,
+          itemCount: widget.images.length,
+          itemBuilder: ((context, index, realIndex) {
+            return Image.network(
+              widget.images[index],
+              width: 400,
+              fit: BoxFit.cover,
+            );
+          }),
+          options: CarouselOptions(
+            height: 400,
+            enableInfiniteScroll: false,
+            aspectRatio: 2,
+            viewportFraction: 1,
+            onPageChanged: (index, reason) {
+              setState(() {
+                activeIndex = index;
+              });
+            },
+          ),
+        ),
+        Positioned(
+          bottom: -32,
+          left: 0,
+          right: 0,
+          child: _getImagePositionIndicators(),
+        )
+      ],
+    );
+  }
+
+  Widget _getImagePositionIndicators() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: widget.images.asMap().entries.map((entry) {
+        return Container(
+          width: activeIndex == entry.key ? 5 : 4,
+          height: activeIndex == entry.key ? 5 : 4,
+          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 2.0),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: activeIndex == entry.key
+                  ? Colors.blue
+                  : Colors.white.withOpacity(0.4)),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class Description extends StatelessWidget {
+  const Description({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Container();
   }
 }
 
-// 3. And here we return the String and use it inside the Text widget.
-String getCommentTeaserText(PostModel post) {
-  // Is this recommended is any way? Perhaps I should just use the "post" param and not create anotherspace in memory for the new List.
-  List<Comment> comments = post.comments;
-  if (comments.isEmpty) return 'No Comments... yet!';
-  if (comments.length == 1) return 'See the first comment';
-  return 'View all ${comments.length.toString()} comments';
+class Comments extends StatelessWidget {
+  const Comments({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
 }

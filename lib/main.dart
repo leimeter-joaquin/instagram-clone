@@ -57,7 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // TODO: create dark/light mode.
           backgroundColor: Colors.black,
           appBar: AppBar(title: const Text('Instagram')),
-          body: TabBarView(children: pages),
+          body: TabBarView(
+            children: pages,
+          ),
           bottomNavigationBar: const TabBar(
             labelColor: Colors.blue,
             unselectedLabelColor: Colors.white,

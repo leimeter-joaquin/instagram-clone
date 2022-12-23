@@ -1,6 +1,11 @@
 {
   "user": { "name": "Culo", "avatar": "https://picsum.photos/400/400" },
-  "image": "https://picsum.photos/400/400",
+  "images": [
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTIZccfNPnqalhrWev-Xo7uBhkor57_rKbkw&usqp=CAU",
+    "https://picsum.photos/400/400",
+    "https://picsum.photos/400/400",
+    "https://picsum.photos/400/400"
+  ],
   "location": "Los Angeles",
   "likes": 320,
   "description": "Beautiful Photo, like it or die!",

@@ -14,7 +14,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    // return const Post(username: 'joaquin');
     return FutureBuilder<PostModel>(
       future: loadAsset(),
       builder: ((context, snapshot) {
